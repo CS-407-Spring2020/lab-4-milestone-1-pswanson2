@@ -3,10 +3,13 @@ package com.example.lab4milestone1;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
 
     private Button buttonStartThread;
 
@@ -28,5 +31,48 @@ public class MainActivity extends AppCompatActivity {
 
     public void stopThread(View view) {
         stopThread = true;
+    }
+
+    public class ExampleRunnable implements Runnable {
+
+        int seconds;
+
+        ExampleRunnable(int seconds) {
+            this.seconds = seconds;
+        }
+
+        @Override
+        public void run() {
+            for (int i = 0; i < seconds; i++) {
+                if(stopThread) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            buttonStartThread.setText("Start");
+                        }
+                    });
+                }
+                if (i == 5) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            buttonStartThread.setText("50%");
+                        }
+                    });
+                }
+                Log.d(TAG, "startThread: " + i);
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    buttonStartThread.setText("Start");
+                }
+            });
+        }
     }
 }
